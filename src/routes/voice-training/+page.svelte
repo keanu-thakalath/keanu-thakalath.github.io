@@ -1,9 +1,15 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import { course } from '$lib/voice-training/courseData';
 	import { vtBase } from '$lib/voice-training/paths.js';
 
 	const progress = getProgressState();
+
+	if (browser && !progress.courseStarted && !progress.testMode) {
+		goto(`${vtBase}/intro`, { replaceState: true });
+	}
 
 	function isWeekComplete(week) {
 		return week.lessons.every(

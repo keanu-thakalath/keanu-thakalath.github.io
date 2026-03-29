@@ -19,11 +19,14 @@ export class ProgressState {
 	lessonDays = $state({});
 	// Recording metadata: lessonId -> "dayIndex:taskId" -> slotId -> { durationMs, createdAt, sizeBytes }
 	recordingMeta = $state({});
+	// Whether the user has explicitly started the course (clicked "Begin Course")
+	courseStarted = $state(false);
 
 	constructor(testMode = false) {
 		this.testMode = testMode;
 		if (testMode) {
 			this.startedAt = new Date().toISOString();
+			this.courseStarted = true;
 			return;
 		}
 		if (browser) {
@@ -64,6 +67,11 @@ export class ProgressState {
 			this.taskTexts = parsed.taskTexts ?? {};
 			this.lessonDays = parsed.lessonDays ?? {};
 			this.recordingMeta = parsed.recordingMeta ?? {};
+			// Explicit flag, or infer true for existing users who have progress
+			this.courseStarted = parsed.courseStarted ??
+				(Object.keys(this.completedLessons).length > 0 ||
+				 Object.keys(this.taskDone).length > 0 ||
+				 Object.keys(this.lessonDays).length > 0);
 
 			if (!this.startedAt) {
 				this.startedAt = new Date().toISOString();
@@ -88,9 +96,15 @@ export class ProgressState {
 				taskDone: $state.snapshot(this.taskDone),
 				taskTexts: $state.snapshot(this.taskTexts),
 				lessonDays: $state.snapshot(this.lessonDays),
-				recordingMeta: $state.snapshot(this.recordingMeta)
+				recordingMeta: $state.snapshot(this.recordingMeta),
+				courseStarted: this.courseStarted
 			})
 		);
+	}
+
+	startCourse() {
+		this.courseStarted = true;
+		this.#save();
 	}
 
 	// --- Lesson read status ---
