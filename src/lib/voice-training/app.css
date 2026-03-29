@@ -161,7 +161,6 @@
 .section-block + .section-block {
   margin-top: 0.85rem;
   padding-top: 0.75rem;
-  border-top: 1px dashed var(--color-border-light);
 }
 
 .task-grid {
