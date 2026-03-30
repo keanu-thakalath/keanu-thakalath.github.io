@@ -23,9 +23,7 @@
 	);
 
 	// Incomplete practice sessions for today
-	const pendingSessions = $derived(
-		today ? today.sessions.filter((s) => !isSessionDone(s)) : []
-	);
+	const pendingSessions = $derived(today ? today.sessions.filter((s) => !isSessionDone(s)) : []);
 
 	const allDone = $derived(!today);
 

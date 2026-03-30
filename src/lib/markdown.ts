@@ -54,8 +54,7 @@ function validateDateString(dateStr: string, context: string): void {
 	const year = date.getFullYear();
 	if (year < 2000 || year > 2100) {
 		console.warn(
-			`${context}: metadata.date year ${year} seems unusual. ` +
-				`Double-check for typos.`
+			`${context}: metadata.date year ${year} seems unusual. ` + `Double-check for typos.`
 		);
 	}
 }

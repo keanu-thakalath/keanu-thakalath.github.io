@@ -26,7 +26,9 @@
 	const firstPracticeDay = $derived(
 		courseDays.findIndex((d) => d.sessions.some((s) => s.lessonId === lesson.id)) + 1
 	);
-	const isLocked = $derived(!progress.testMode && todayIndex >= 0 && firstPracticeDay - 1 > todayIndex);
+	const isLocked = $derived(
+		!progress.testMode && todayIndex >= 0 && firstPracticeDay - 1 > todayIndex
+	);
 	const nextPracticeDay = $derived(
 		courseDays.findIndex((d) =>
 			d.sessions.some(
@@ -34,7 +36,6 @@
 			)
 		) + 1
 	);
-
 </script>
 
 <svelte:head>
@@ -54,7 +55,6 @@
 	<p class="muted">Week {lesson.weekId}: {lesson.weekTitle}</p>
 	<p class="muted">{lesson.difficulty} · {lesson.duration}</p>
 	<p>{lesson.summary}</p>
-
 </section>
 
 <section class="course-card">
@@ -66,7 +66,6 @@
 			{/each}
 		</article>
 	{/each}
-
 </section>
 
 <section class="course-card">
@@ -79,9 +78,12 @@
 
 	<ul class="task-summary">
 		{#each workflow as task}
-			{@const count = task.type === 'links'
-				? (progress.getLinks(lesson.id, task.id).length > 0 ? 1 : 0)
-				: progress.taskInstancesDone(lesson.id, task.id, task.type, schedule)}
+			{@const count =
+				task.type === 'links'
+					? progress.getLinks(lesson.id, task.id).length > 0
+						? 1
+						: 0
+					: progress.taskInstancesDone(lesson.id, task.id, task.type, schedule)}
 			{@const done = count >= task.target}
 			<li class:complete={done}>
 				<span class="status-dot" class:done></span>
@@ -103,7 +105,9 @@
 			href={allComplete
 				? `${vtBase}/practice/day/${firstPracticeDay}/${lesson.id}/1`
 				: `${vtBase}/practice/day/${nextPracticeDay}/${lesson.id}/1`}
-			onclick={() => { if (!progress.lessonDone(lesson.id)) progress.toggleLesson(lesson.id); }}
+			onclick={() => {
+				if (!progress.lessonDone(lesson.id)) progress.toggleLesson(lesson.id);
+			}}
 		>
 			{allComplete ? 'Review Practice' : "Start Today's Practice"}
 		</a>

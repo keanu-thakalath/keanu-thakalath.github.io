@@ -20,14 +20,11 @@
 	function lessonState(index) {
 		if (progress.testMode) return 'active';
 		const l = week.lessons[index];
-		const firstDay = courseDays.findIndex((d) =>
-			d.sessions.some((s) => s.lessonId === l.id)
-		);
+		const firstDay = courseDays.findIndex((d) => d.sessions.some((s) => s.lessonId === l.id));
 		if (todayIndex >= 0 && firstDay > todayIndex) return 'locked';
 		if (progress.isLessonPracticeComplete(l.id, l)) return 'done';
 		return 'active';
 	}
-
 </script>
 
 <svelte:head>
@@ -58,11 +55,12 @@
 <section class="card-grid">
 	{#each week.lessons as lesson, index}
 		{@const state = lessonState(index)}
-		<article
-			class="course-card"
-			class:locked={state === 'locked'}
-		>
-			<h3><a href={`${vtBase}/week/${week.id}/lesson/${lesson.id}`}>Lesson {index + 1}: {lesson.title}</a></h3>
+		<article class="course-card" class:locked={state === 'locked'}>
+			<h3>
+				<a href={`${vtBase}/week/${week.id}/lesson/${lesson.id}`}
+					>Lesson {index + 1}: {lesson.title}</a
+				>
+			</h3>
 			<p class="muted">{lesson.difficulty} · {lesson.duration}</p>
 			<p>{lesson.summary}</p>
 			<p class="muted">Read: {progress.lessonDone(lesson.id) ? 'Yes' : 'No'}</p>

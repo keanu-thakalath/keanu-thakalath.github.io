@@ -6,11 +6,7 @@ const RECORDING_KEY = Symbol('RECORDING');
 
 function pickMimeType() {
 	if (typeof MediaRecorder === 'undefined') return null;
-	for (const type of [
-		'audio/webm;codecs=opus',
-		'audio/webm',
-		'audio/mp4'
-	]) {
+	for (const type of ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']) {
 		if (MediaRecorder.isTypeSupported(type)) return type;
 	}
 	return null;
@@ -36,8 +32,7 @@ export class RecordingState {
 		this.#progress = progressState;
 		if (browser) {
 			this.#mimeType = pickMimeType();
-			this.available =
-				this.#mimeType !== null && typeof indexedDB !== 'undefined';
+			this.available = this.#mimeType !== null && typeof indexedDB !== 'undefined';
 		}
 	}
 
@@ -131,12 +126,7 @@ export class RecordingState {
 	}
 
 	async saveClip(lessonId, dayIndex, taskId, slotId, blob, durationMs) {
-		const key = recordingStore.constructor.buildKey(
-			lessonId,
-			dayIndex,
-			taskId,
-			slotId
-		);
+		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
 		await recordingStore.save(key, blob, durationMs);
 		this.#progress.setRecordingMeta(lessonId, dayIndex, taskId, slotId, {
 			durationMs,
@@ -146,12 +136,7 @@ export class RecordingState {
 	}
 
 	async loadClip(lessonId, dayIndex, taskId, slotId) {
-		const key = recordingStore.constructor.buildKey(
-			lessonId,
-			dayIndex,
-			taskId,
-			slotId
-		);
+		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
 		const record = await recordingStore.load(key);
 		if (!record) return null;
 		const url = URL.createObjectURL(record.blob);
@@ -160,12 +145,7 @@ export class RecordingState {
 	}
 
 	async deleteClip(lessonId, dayIndex, taskId, slotId) {
-		const key = recordingStore.constructor.buildKey(
-			lessonId,
-			dayIndex,
-			taskId,
-			slotId
-		);
+		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
 		await recordingStore.delete(key);
 		this.#progress.removeRecordingMeta(lessonId, dayIndex, taskId, slotId);
 	}

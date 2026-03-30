@@ -2,8 +2,14 @@
 	import { getRecordingState } from '$lib/voice-training/recording-state.svelte.js';
 	import PlaybackWidget from './PlaybackWidget.svelte';
 
-	let { lessonId, dayIndex, taskId, slotId = 'default', label = 'Recording', readonly = false } =
-		$props();
+	let {
+		lessonId,
+		dayIndex,
+		taskId,
+		slotId = 'default',
+		label = 'Recording',
+		readonly = false
+	} = $props();
 
 	const rec = getRecordingState();
 	const myKey = `${lessonId}:${dayIndex}:${taskId}:${slotId}`;

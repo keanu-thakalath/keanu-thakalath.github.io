@@ -19,15 +19,15 @@
 	$effect(() => {
 		if (task.compareWith) {
 			const cw = task.compareWith;
-			rec.loadClip(cw.lessonId, cw.dayIndex ?? 0, cw.taskId, cw.slotId ?? 'default').then(
-				(result) => {
+			rec
+				.loadClip(cw.lessonId, cw.dayIndex ?? 0, cw.taskId, cw.slotId ?? 'default')
+				.then((result) => {
 					if (result) {
 						compareUrl = result.url;
 						compareDuration = result.durationMs;
 						compareLabel = cw.label ?? 'Your baseline';
 					}
-				}
-			);
+				});
 		}
 	});
 
@@ -41,7 +41,9 @@
 
 {#if !rec.available}
 	<!-- Fallback when recording is not available -->
-	<p class="muted">Recording is not available in this browser. Record externally and mark complete.</p>
+	<p class="muted">
+		Recording is not available in this browser. Record externally and mark complete.
+	</p>
 	{#if isReview}
 		{#if fallbackDone}
 			<p class="muted">Done</p>

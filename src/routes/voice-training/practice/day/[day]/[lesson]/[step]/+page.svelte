@@ -1,7 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
-	import { getWorkflowItems, getCourseDays, getScheduleForDay } from '$lib/voice-training/courseData';
+	import {
+		getWorkflowItems,
+		getCourseDays,
+		getScheduleForDay
+	} from '$lib/voice-training/courseData';
 	import { getRecordingState } from '$lib/voice-training/recording-state.svelte.js';
 	import { linkify } from '$lib/voice-training/linkify.js';
 	import RecordingTask from '$lib/voice-training/components/RecordingTask.svelte';
@@ -33,9 +37,7 @@
 
 	// Reference links from any 'links' task (shown during timer tasks)
 	const referenceLinks = $derived(
-		workflow
-			.filter((t) => t.type === 'links')
-			.flatMap((t) => progress.getLinks(lesson.id, t.id))
+		workflow.filter((t) => t.type === 'links').flatMap((t) => progress.getLinks(lesson.id, t.id))
 	);
 
 	// --- Day navigation for review mode ---
@@ -49,9 +51,7 @@
 	const currentDayPos = $derived(lessonDayIndices.indexOf(dayIndex));
 	const prevDay = $derived(currentDayPos > 0 ? lessonDayIndices[currentDayPos - 1] + 1 : null);
 	const nextDay = $derived(
-		currentDayPos < lessonDayIndices.length - 1
-			? lessonDayIndices[currentDayPos + 1] + 1
-			: null
+		currentDayPos < lessonDayIndices.length - 1 ? lessonDayIndices[currentDayPos + 1] + 1 : null
 	);
 
 	// --- Is this specific task instance done? ---
@@ -74,9 +74,7 @@
 		// If there are more pending sessions today, go to the next one
 		const day = data.day;
 		const nextSession = day.sessions.find(
-			(s) =>
-				s.lessonId !== lesson.id &&
-				progress.getLessonDay(s.lessonId) <= s.lessonDay
+			(s) => s.lessonId !== lesson.id && progress.getLessonDay(s.lessonId) <= s.lessonDay
 		);
 		if (nextSession) {
 			goto(`${vtBase}/practice/day/${dayIndex + 1}/${nextSession.lessonId}/1`);
@@ -281,12 +279,10 @@
 					dayIndex={lessonDay}
 					isReview={true}
 				/>
+			{:else if isDone(currentTask)}
+				<p class="timer-readout done-readout">Completed</p>
 			{:else}
-				{#if isDone(currentTask)}
-					<p class="timer-readout done-readout">Completed</p>
-				{:else}
-					<p class="muted">Not completed</p>
-				{/if}
+				<p class="muted">Not completed</p>
 			{/if}
 		{:else}
 			<!-- Active mode: interactive -->
@@ -303,9 +299,7 @@
 						>
 							Start
 						</button>
-						<button type="button" onclick={pauseTimer} disabled={!timerRunning}>
-							Pause
-						</button>
+						<button type="button" onclick={pauseTimer} disabled={!timerRunning}> Pause </button>
 						<button type="button" onclick={resetTimer}>Reset</button>
 					</div>
 				{/if}
@@ -330,12 +324,7 @@
 					placeholder={currentTask.prompt ?? 'Write here...'}
 					value={progress.getInstanceText(lesson.id, lessonDay, currentTask.id)}
 					oninput={(e) =>
-						progress.setInstanceText(
-							lesson.id,
-							lessonDay,
-							currentTask.id,
-							e.currentTarget.value
-						)}
+						progress.setInstanceText(lesson.id, lessonDay, currentTask.id, e.currentTarget.value)}
 				></textarea>
 			{:else if currentTask.type === 'links'}
 				<div class="link-manager">
@@ -353,8 +342,7 @@
 									<button
 										type="button"
 										class="small"
-										onclick={() =>
-											progress.removeLink(lesson.id, currentTask.id, link.id)}
+										onclick={() => progress.removeLink(lesson.id, currentTask.id, link.id)}
 									>
 										Remove
 									</button>
@@ -367,23 +355,16 @@
 					{progress.getLinks(lesson.id, currentTask.id).length} links saved
 				</p>
 			{:else if currentTask.type === 'recording'}
-				<RecordingTask
-					task={currentTask}
-					lessonId={lesson.id}
-					dayIndex={lessonDay}
-				/>
+				<RecordingTask task={currentTask} lessonId={lesson.id} dayIndex={lessonDay} />
+			{:else if isDone(currentTask)}
+				<p class="muted">Done</p>
 			{:else}
-				{#if isDone(currentTask)}
-					<p class="muted">Done</p>
-				{:else}
-					<button
-						type="button"
-						onclick={() =>
-							progress.markInstanceDone(lesson.id, lessonDay, currentTask.id)}
-					>
-						I did this
-					</button>
-				{/if}
+				<button
+					type="button"
+					onclick={() => progress.markInstanceDone(lesson.id, lessonDay, currentTask.id)}
+				>
+					I did this
+				</button>
 			{/if}
 		{/if}
 	</section>

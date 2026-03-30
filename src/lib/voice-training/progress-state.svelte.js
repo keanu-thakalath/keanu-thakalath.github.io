@@ -68,10 +68,11 @@ export class ProgressState {
 			this.lessonDays = parsed.lessonDays ?? {};
 			this.recordingMeta = parsed.recordingMeta ?? {};
 			// Explicit flag, or infer true for existing users who have progress
-			this.courseStarted = parsed.courseStarted ??
+			this.courseStarted =
+				parsed.courseStarted ??
 				(Object.keys(this.completedLessons).length > 0 ||
-				 Object.keys(this.taskDone).length > 0 ||
-				 Object.keys(this.lessonDays).length > 0);
+					Object.keys(this.taskDone).length > 0 ||
+					Object.keys(this.lessonDays).length > 0);
 
 			if (!this.startedAt) {
 				this.startedAt = new Date().toISOString();

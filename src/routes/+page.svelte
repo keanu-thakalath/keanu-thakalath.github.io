@@ -5,7 +5,7 @@
 
 	let { data } = $props();
 	let visible = $state(false);
-	onMount(() => visible = true);
+	onMount(() => (visible = true));
 </script>
 
 <svelte:head>
@@ -16,7 +16,9 @@
 	{#if visible}
 		<section class="hero" in:fly={{ y: 24, duration: 700, easing: cubicOut }}>
 			<h1 class="greeting">hi, i'm <span class="name">keanu</span></h1>
-			<p class="tagline">i like building things for the web, tinkering with AI, and learning Japanese.</p>
+			<p class="tagline">
+				i like building things for the web, tinkering with AI, and learning Japanese.
+			</p>
 		</section>
 
 		<section class="section" in:fly={{ y: 20, duration: 600, delay: 150, easing: cubicOut }}>
@@ -60,7 +62,12 @@
 					<p>An AI-powered Japanese reading companion for immersion learners.</p>
 					<span class="tech">Rust &middot; KurrentDB</span>
 				</a>
-				<a class="project-card" href="https://github.com/hcp-uw/mosaic" target="_blank" rel="noreferrer">
+				<a
+					class="project-card"
+					href="https://github.com/hcp-uw/mosaic"
+					target="_blank"
+					rel="noreferrer"
+				>
 					<h3>Mosaic</h3>
 					<p>A decentralized peer-to-peer file storage network.</p>
 					<span class="tech">Go</span>
@@ -72,7 +79,10 @@
 				</div>
 				<a class="project-card" href="/voice-training">
 					<h3>Ruten</h3>
-					<p>A structured, fully local voice feminization course with practice tracking and timed exercises.</p>
+					<p>
+						A structured, fully local voice feminization course with practice tracking and timed
+						exercises.
+					</p>
 					<span class="tech">SvelteKit</span>
 				</a>
 			</div>
@@ -82,10 +92,14 @@
 			<h2>books</h2>
 			<ul class="fav-list">
 				<li>
-					<span class="fav-title">The Myth of Sisyphus <span class="fav-author">by Albert Camus</span></span>
+					<span class="fav-title"
+						>The Myth of Sisyphus <span class="fav-author">by Albert Camus</span></span
+					>
 				</li>
 				<li>
-					<span class="fav-title">The Mayor of Casterbridge <span class="fav-author">by Thomas Hardy</span></span>
+					<span class="fav-title"
+						>The Mayor of Casterbridge <span class="fav-author">by Thomas Hardy</span></span
+					>
 				</li>
 				<li>
 					<span class="fav-title">涼宮ハルヒの憂鬱 <span class="fav-author">谷川流</span></span>
@@ -129,7 +143,11 @@
 					<h3>experience</h3>
 					<p>Amazon Lightsail &mdash; 2x SDE Intern</p>
 					<p>Amazon Lightsail &mdash; SDE, starting Sep 2026</p>
-					<p><a href="https://github.com/yomidevs/yomitan" target="_blank" rel="noreferrer">Yomitan</a> contributor</p>
+					<p>
+						<a href="https://github.com/yomidevs/yomitan" target="_blank" rel="noreferrer"
+							>Yomitan</a
+						> contributor
+					</p>
 				</div>
 				<div class="resume-row">
 					<h3>skills</h3>
@@ -288,7 +306,9 @@
 		padding: 0.9rem;
 		text-decoration: none;
 		color: inherit;
-		transition: border-color 0.25s, transform 0.25s;
+		transition:
+			border-color 0.25s,
+			transform 0.25s;
 	}
 
 	.project-card:hover {
