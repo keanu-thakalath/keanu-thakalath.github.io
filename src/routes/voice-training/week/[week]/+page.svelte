@@ -30,6 +30,10 @@
 
 </script>
 
+<svelte:head>
+	<title>Week {week.id}: {week.title} — Ruten</title>
+</svelte:head>
+
 <nav class="crumbs">
 	<a href={vtBase}>Home</a>
 	<span>/</span>

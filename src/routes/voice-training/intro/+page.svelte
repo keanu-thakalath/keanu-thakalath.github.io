@@ -11,6 +11,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Ruten — About</title>
+</svelte:head>
+
 <section class="intro-page">
 	<div class="intro-hero">
 		<h1>Ruten</h1>

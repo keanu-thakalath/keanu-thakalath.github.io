@@ -2,6 +2,10 @@
 	let { data } = $props();
 </script>
 
+<svelte:head>
+	<title>Blog — Keanu Thakalath</title>
+</svelte:head>
+
 <div class="page">
 	<h1>Blog</h1>
 

@@ -35,6 +35,10 @@
 	const hasWork = $derived(progress.testMode || activeWeekIndex !== -1);
 </script>
 
+<svelte:head>
+	<title>Ruten</title>
+</svelte:head>
+
 <section class="hero-card">
 	<h1>{course.title}</h1>
 	<p>{course.subtitle}</p>

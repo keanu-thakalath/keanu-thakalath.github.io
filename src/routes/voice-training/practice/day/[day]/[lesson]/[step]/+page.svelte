@@ -164,6 +164,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Practice — Ruten</title>
+</svelte:head>
+
 <nav class="crumbs">
 	<a href={vtBase}>Home</a>
 	<span>/</span>

@@ -42,6 +42,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Today — Ruten</title>
+</svelte:head>
+
 <nav class="crumbs">
 	<a href={vtBase}>Home</a>
 	<span>/</span>

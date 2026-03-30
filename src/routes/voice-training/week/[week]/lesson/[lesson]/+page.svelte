@@ -37,6 +37,10 @@
 
 </script>
 
+<svelte:head>
+	<title>{lesson.title} — Ruten</title>
+</svelte:head>
+
 <nav class="crumbs">
 	<a href={vtBase}>Home</a>
 	<span>/</span>
