@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { getRecordingState } from '$lib/voice-training/recording-state.svelte.js';
 	import PlaybackWidget from './PlaybackWidget.svelte';
 
@@ -9,17 +9,24 @@
 		slotId = 'default',
 		label = 'Recording',
 		readonly = false
+	}: {
+		lessonId: string;
+		dayIndex: number;
+		taskId: string;
+		slotId?: string;
+		label?: string;
+		readonly?: boolean;
 	} = $props();
 
 	const rec = getRecordingState();
 	const myKey = `${lessonId}:${dayIndex}:${taskId}:${slotId}`;
 	const isMyRecording = $derived(rec.isRecording && rec.activeSlotKey === myKey);
 
-	let clipUrl = $state(null);
+	let clipUrl: string | null = $state(null);
 	let clipDuration = $state(0);
 	let hasClip = $state(false);
 	let loading = $state(true);
-	let error = $state(null);
+	let error: string | null = $state(null);
 
 	// Load existing clip on mount
 	$effect(() => {
@@ -57,8 +64,8 @@
 			clipDuration = result.durationMs;
 			hasClip = true;
 			error = null;
-		} catch (e) {
-			if (e.name === 'QuotaExceededError') {
+		} catch (e: unknown) {
+			if (e instanceof DOMException && e.name === 'QuotaExceededError') {
 				error = 'Storage full. Try deleting old recordings.';
 			} else {
 				error = 'Failed to save recording.';
@@ -73,7 +80,7 @@
 		hasClip = false;
 	}
 
-	function formatElapsed(s) {
+	function formatElapsed(s: number) {
 		const mm = String(Math.floor(s / 60)).padStart(2, '0');
 		const ss = String(s % 60).padStart(2, '0');
 		return `${mm}:${ss}`;

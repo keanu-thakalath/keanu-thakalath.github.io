@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import type { PageLoadEvent } from './$types';
 import { getCourseDays, getAllLessons, getScheduleForDay } from '$lib/voice-training/courseData';
 
 const courseDays = getCourseDays();
@@ -24,7 +25,7 @@ export function entries() {
 	return result;
 }
 
-export function load({ params }) {
+export function load({ params }: PageLoadEvent) {
 	const dayIndex = parseInt(params.day) - 1;
 	const lessonId = params.lesson;
 	const step = parseInt(params.step);

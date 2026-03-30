@@ -1,4 +1,4 @@
-export function linkify(text) {
+export function linkify(text: string): string {
 	let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	s = s.replace(
 		/((?:this|that|the)\s[\w\s,'-]{1,80}?[\w'-]+)\s*\((https?:\/\/[^\s)]+)\)/gi,

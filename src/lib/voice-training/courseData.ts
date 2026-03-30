@@ -1654,8 +1654,47 @@ export const course = {
 	]
 };
 
-export function getAllLessons() {
-	const lessons = course.weeks.flatMap((week) =>
+export interface WorkflowTask {
+	id: string;
+	type: string;
+	text: string;
+	detail?: string;
+	timerSeconds?: number;
+	prompt?: string;
+	slots?: Array<{ id: string; label: string }>;
+	compareWith?: {
+		lessonId: string;
+		dayIndex: number;
+		taskId: string;
+		slotId: string;
+		label: string;
+	};
+}
+
+export interface WorkflowItem extends WorkflowTask {
+	target: number;
+}
+
+export interface Lesson {
+	id: string;
+	title: string;
+	weekId?: number | null;
+	weekTitle?: string | null;
+	lessonNumber?: number | null;
+	difficulty?: string;
+	duration?: string;
+	summary?: string;
+	sections?: Array<{ heading: string; body: string[] }>;
+	practice?: string[];
+	homework?: Array<{ id: string; text: string; type: string }>;
+	workflow?: WorkflowTask[];
+	schedule?: string[][];
+	recurring?: boolean;
+	startAfterLesson?: string;
+}
+
+export function getAllLessons(): Lesson[] {
+	const lessons: Lesson[] = course.weeks.flatMap((week) =>
 		week.lessons.map((lesson, index) => ({
 			...lesson,
 			weekId: week.id,
@@ -1676,11 +1715,11 @@ export function getAllLessons() {
 	return lessons;
 }
 
-export function getWeek(weekId) {
+export function getWeek(weekId: string | number) {
 	return course.weeks.find((week) => String(week.id) === String(weekId));
 }
 
-export function getLesson(weekId, lessonId) {
+export function getLesson(weekId: string | number, lessonId: string): Lesson | null {
 	const rec = (course.recurring ?? []).find((r) => r.id === lessonId);
 	if (rec) return { ...rec, weekId: null, weekTitle: null };
 
@@ -1696,7 +1735,7 @@ export function getLesson(weekId, lessonId) {
 	};
 }
 
-function toId(text, prefix) {
+function toId(text: string, prefix: string) {
 	const slug = text
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, '-')
@@ -1705,12 +1744,12 @@ function toId(text, prefix) {
 	return `${prefix}-${slug || 'item'}`;
 }
 
-function firstNumber(text) {
+function firstNumber(text: string) {
 	const match = text.match(/(\d+)/);
 	return match ? Number(match[1]) : null;
 }
 
-function inferHomeworkTarget(item) {
+function inferHomeworkTarget(item: { target?: number; text: string; type?: string }) {
 	if (typeof item.target === 'number') return item.target;
 	const text = item.text.toLowerCase();
 	if (item.type === 'links') return 2;
@@ -1729,14 +1768,14 @@ function inferHomeworkTarget(item) {
 	return 3;
 }
 
-function inferPracticeTarget(text) {
+function inferPracticeTarget(text: string) {
 	const value = firstNumber(text);
 	if (text.toLowerCase().includes('daily') || text.toLowerCase().includes('every day')) return 5;
 	if (value && value <= 7) return value;
 	return 1;
 }
 
-function inferPracticeDurationSeconds(text) {
+function inferPracticeDurationSeconds(text: string) {
 	const lower = text.toLowerCase();
 	const range = lower.match(/(\d+)\s*-\s*(\d+)\s*min/);
 	if (range) return Number(range[1]) * 60;
@@ -1745,7 +1784,7 @@ function inferPracticeDurationSeconds(text) {
 	return 300;
 }
 
-export function getWorkflowItems(lesson) {
+export function getWorkflowItems(lesson: Lesson): WorkflowItem[] {
 	const schedule = lesson.schedule ?? [];
 	return (lesson.workflow ?? []).map((task) => ({
 		...task,
@@ -1760,7 +1799,7 @@ export function getWorkflowItems(lesson) {
  * Returns the tasks for a given lesson day, handling recurring lessons
  * that cycle through the same schedule indefinitely.
  */
-export function getScheduleForDay(lesson, lessonDay) {
+export function getScheduleForDay(lesson: Lesson, lessonDay: number): string[] {
 	const schedule = lesson.schedule ?? [];
 	if (schedule.length === 0) return [];
 	if (lesson.recurring) return schedule[lessonDay % schedule.length] ?? [];
@@ -1834,15 +1873,15 @@ export function getCourseDays() {
 	return days;
 }
 
-export function getHomeworkItems(lesson) {
-	return lesson.homework.map((item) => ({
+export function getHomeworkItems(lesson: Lesson) {
+	return (lesson.homework ?? []).map((item) => ({
 		...item,
 		target: inferHomeworkTarget(item)
 	}));
 }
 
-export function getPracticeItems(lesson) {
-	return lesson.practice.map((text) => ({
+export function getPracticeItems(lesson: Lesson) {
+	return (lesson.practice ?? []).map((text) => ({
 		id: toId(text, 'drill'),
 		text,
 		target: inferPracticeTarget(text),

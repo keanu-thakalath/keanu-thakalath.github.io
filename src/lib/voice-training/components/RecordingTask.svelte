@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
 	import { getRecordingState } from '$lib/voice-training/recording-state.svelte.js';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
+	import type { WorkflowItem } from '$lib/voice-training/courseData';
 	import RecorderWidget from './RecorderWidget.svelte';
 	import PlaybackWidget from './PlaybackWidget.svelte';
 
-	let { task, lessonId, dayIndex, isReview = false } = $props();
+	let {
+		task,
+		lessonId,
+		dayIndex,
+		isReview = false
+	}: { task: WorkflowItem; lessonId: string; dayIndex: number; isReview?: boolean } = $props();
 
 	const rec = getRecordingState();
 	const progress = getProgressState();
@@ -12,7 +18,7 @@
 	const slots = $derived(task.slots ?? [{ id: 'default', label: 'Recording' }]);
 
 	// Load compareWith reference clip
-	let compareUrl = $state(null);
+	let compareUrl: string | null = $state(null);
 	let compareDuration = $state(0);
 	let compareLabel = $state('');
 

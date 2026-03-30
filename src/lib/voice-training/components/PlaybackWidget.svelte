@@ -1,7 +1,11 @@
-<script>
-	let { objectUrl, durationMs = 0, label = '' } = $props();
+<script lang="ts">
+	let {
+		objectUrl,
+		durationMs = 0,
+		label = ''
+	}: { objectUrl: string; durationMs?: number; label?: string } = $props();
 
-	let audioEl = $state(null);
+	let audioEl: HTMLAudioElement | null = $state(null);
 	let playing = $state(false);
 	let currentTime = $state(0);
 	let knownDuration = $state(0);
@@ -36,7 +40,7 @@
 	}
 
 	function onEnded() {
-		if (!knownDuration && audioEl?.currentTime > 0) {
+		if (!knownDuration && audioEl && audioEl.currentTime > 0) {
 			knownDuration = audioEl.currentTime;
 		}
 		playing = false;
@@ -51,14 +55,15 @@
 		playing = false;
 	}
 
-	function seek(e) {
-		if (!audioEl || !duration) return;
-		const rect = e.currentTarget.getBoundingClientRect();
+	function seek(e: MouseEvent) {
+		const target = e.currentTarget;
+		if (!(target instanceof HTMLElement) || !audioEl || !duration) return;
+		const rect = target.getBoundingClientRect();
 		const pct = (e.clientX - rect.left) / rect.width;
 		audioEl.currentTime = pct * duration;
 	}
 
-	function formatTime(s) {
+	function formatTime(s: number) {
 		const safe = Math.max(0, Math.floor(s));
 		const mm = String(Math.floor(safe / 60)).padStart(2, '0');
 		const ss = String(safe % 60).padStart(2, '0');

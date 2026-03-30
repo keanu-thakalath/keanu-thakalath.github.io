@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import { getWorkflowItems, getCourseDays } from '$lib/voice-training/courseData';
 	import { linkify } from '$lib/voice-training/linkify.js';
@@ -16,7 +16,7 @@
 
 	const courseDays = getCourseDays();
 
-	function isSessionDone(s) {
+	function isSessionDone(s: { lessonId: string; lessonDay: number }) {
 		return progress.getLessonDay(s.lessonId) > s.lessonDay;
 	}
 
@@ -58,7 +58,7 @@
 </section>
 
 <section class="course-card">
-	{#each lesson.sections as section (section.heading)}
+	{#each lesson.sections ?? [] as section (section.heading)}
 		<article class="section-block">
 			<h3>{section.heading}</h3>
 			{#each section.body as paragraph, i (i)}

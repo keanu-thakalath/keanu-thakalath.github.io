@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import type { PageLoadEvent } from './$types';
 import { course, getLesson } from '$lib/voice-training/courseData';
 
 export function entries() {
@@ -10,7 +11,7 @@ export function entries() {
 	);
 }
 
-export function load({ params }) {
+export function load({ params }: PageLoadEvent) {
 	const lesson = getLesson(params.week, params.lesson);
 
 	if (!lesson) {

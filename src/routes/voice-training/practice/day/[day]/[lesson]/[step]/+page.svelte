@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import {
@@ -6,6 +6,7 @@
 		getCourseDays,
 		getScheduleForDay
 	} from '$lib/voice-training/courseData';
+	import type { WorkflowItem } from '$lib/voice-training/courseData';
 	import { getRecordingState } from '$lib/voice-training/recording-state.svelte.js';
 	import { linkify } from '$lib/voice-training/linkify.js';
 	import RecordingTask from '$lib/voice-training/components/RecordingTask.svelte';
@@ -25,7 +26,9 @@
 	const lessonDay = $derived(session.lessonDay);
 	const todayTaskIds = $derived(getScheduleForDay(lesson, lessonDay));
 	const todayTasks = $derived(
-		todayTaskIds.map((id) => workflow.find((t) => t.id === id)).filter(Boolean)
+		todayTaskIds
+			.map((id) => workflow.find((t) => t.id === id))
+			.filter((t): t is WorkflowItem => t !== undefined)
 	);
 	const currentTask = $derived(step <= todayTasks.length ? todayTasks[step - 1] : null);
 	const isReview = $derived(progress.getLessonDay(lesson.id) > lessonDay);
@@ -54,15 +57,14 @@
 		currentDayPos < lessonDayIndices.length - 1 ? lessonDayIndices[currentDayPos + 1] + 1 : null
 	);
 
-	// --- Is this specific task instance done? ---
-	function isDone(task) {
+	function isDone(task: WorkflowItem | null): boolean {
 		if (!task) return false;
 		if (task.type === 'links') return progress.getLinks(lesson.id, task.id).length > 0;
 		if (task.type === 'text')
 			return progress.getInstanceText(lesson.id, lessonDay, task.id).trim().length > 0;
 		if (task.type === 'recording') {
 			if (!recording.available) return progress.isInstanceDone(lesson.id, lessonDay, task.id);
-			const slots = task.slots ?? [{ id: 'default' }];
+			const slots = task.slots ?? [{ id: 'default', label: 'Recording' }];
 			return slots.every((s) => recording.hasClip(lesson.id, lessonDay, task.id, s.id));
 		}
 		return progress.isInstanceDone(lesson.id, lessonDay, task.id);
@@ -95,7 +97,7 @@
 	// --- Timer ---
 	let timerRemaining = $state(0);
 	let timerRunning = $state(false);
-	let timerHandle = null;
+	let timerHandle: ReturnType<typeof setInterval> | null = null;
 
 	$effect(() => {
 		const task = currentTask;
@@ -105,7 +107,7 @@
 			timerHandle = null;
 		}
 		if (task?.type === 'timer') {
-			timerRemaining = task.timerSeconds;
+			timerRemaining = task.timerSeconds ?? 0;
 		}
 		return () => {
 			if (timerHandle) clearInterval(timerHandle);
@@ -117,11 +119,11 @@
 		timerRunning = true;
 		timerHandle = setInterval(() => {
 			if (timerRemaining <= 1) {
-				clearInterval(timerHandle);
+				if (timerHandle) clearInterval(timerHandle);
 				timerHandle = null;
 				timerRemaining = 0;
 				timerRunning = false;
-				progress.markInstanceDone(lesson.id, lessonDay, currentTask.id);
+				if (currentTask) progress.markInstanceDone(lesson.id, lessonDay, currentTask.id);
 				return;
 			}
 			timerRemaining--;
@@ -139,11 +141,11 @@
 	function resetTimer() {
 		pauseTimer();
 		if (currentTask?.type === 'timer') {
-			timerRemaining = currentTask.timerSeconds;
+			timerRemaining = currentTask.timerSeconds ?? 0;
 		}
 	}
 
-	function formatTime(seconds) {
+	function formatTime(seconds: number) {
 		const safe = Math.max(0, Math.floor(seconds));
 		const mm = String(Math.floor(safe / 60)).padStart(2, '0');
 		const ss = String(safe % 60).padStart(2, '0');

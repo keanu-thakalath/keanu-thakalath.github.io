@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '$lib/voice-training/app.css';
 	import { browser } from '$app/environment';
 	import { setProgressState } from '$lib/voice-training/progress-state.svelte.js';

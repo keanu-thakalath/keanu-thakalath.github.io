@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import { vtBase } from '$lib/voice-training/paths.js';

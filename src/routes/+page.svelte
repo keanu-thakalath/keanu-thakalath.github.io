@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { onMount } from 'svelte';

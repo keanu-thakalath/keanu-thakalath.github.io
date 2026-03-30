@@ -1,17 +1,30 @@
+export interface ClipRecord {
+	blob: Blob;
+	mimeType: string;
+	durationMs: number;
+	createdAt: string;
+	sizeBytes: number;
+}
+
 const DB_NAME = 'voice-training-recordings';
 const STORE_NAME = 'clips';
 const DB_VERSION = 1;
 
+export function buildClipKey(
+	lessonId: string,
+	dayIndex: number,
+	taskId: string,
+	slotId = 'default'
+): string {
+	return `${lessonId}:${dayIndex}:${taskId}:${slotId}`;
+}
+
 class RecordingStore {
-	#dbPromise = null;
+	#dbPromise: Promise<IDBDatabase | null> | null = null;
 
-	static buildKey(lessonId, dayIndex, taskId, slotId = 'default') {
-		return `${lessonId}:${dayIndex}:${taskId}:${slotId}`;
-	}
-
-	async #open() {
+	async #open(): Promise<IDBDatabase | null> {
 		if (this.#dbPromise) return this.#dbPromise;
-		this.#dbPromise = new Promise((resolve) => {
+		this.#dbPromise = new Promise<IDBDatabase | null>((resolve) => {
 			if (typeof indexedDB === 'undefined') {
 				resolve(null);
 				return;
@@ -29,7 +42,7 @@ class RecordingStore {
 		return this.#dbPromise;
 	}
 
-	async save(key, blob, durationMs) {
+	async save(key: string, blob: Blob, durationMs: number): Promise<void> {
 		const db = await this.#open();
 		if (!db) return;
 		const buffer = await blob.arrayBuffer();
@@ -40,7 +53,7 @@ class RecordingStore {
 			createdAt: new Date().toISOString(),
 			sizeBytes: blob.size
 		};
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			const tx = db.transaction(STORE_NAME, 'readwrite');
 			tx.objectStore(STORE_NAME).put(record, key);
 			tx.oncomplete = () => resolve();
@@ -48,7 +61,7 @@ class RecordingStore {
 		});
 	}
 
-	async load(key) {
+	async load(key: string): Promise<ClipRecord | null> {
 		const db = await this.#open();
 		if (!db) return null;
 		return new Promise((resolve, reject) => {
@@ -72,10 +85,10 @@ class RecordingStore {
 		});
 	}
 
-	async delete(key) {
+	async delete(key: string): Promise<void> {
 		const db = await this.#open();
 		if (!db) return;
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			const tx = db.transaction(STORE_NAME, 'readwrite');
 			tx.objectStore(STORE_NAME).delete(key);
 			tx.oncomplete = () => resolve();
@@ -83,7 +96,7 @@ class RecordingStore {
 		});
 	}
 
-	async has(key) {
+	async has(key: string): Promise<boolean> {
 		const db = await this.#open();
 		if (!db) return false;
 		return new Promise((resolve, reject) => {
@@ -94,7 +107,7 @@ class RecordingStore {
 		});
 	}
 
-	async getAllKeys() {
+	async getAllKeys(): Promise<IDBValidKey[]> {
 		const db = await this.#open();
 		if (!db) return [];
 		return new Promise((resolve, reject) => {
@@ -105,7 +118,7 @@ class RecordingStore {
 		});
 	}
 
-	async getStorageEstimate() {
+	async getStorageEstimate(): Promise<StorageEstimate> {
 		if (navigator.storage?.estimate) {
 			return navigator.storage.estimate();
 		}

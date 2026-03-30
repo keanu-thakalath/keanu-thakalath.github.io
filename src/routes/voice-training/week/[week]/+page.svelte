@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import { getCourseDays } from '$lib/voice-training/courseData';
 	import { vtBase } from '$lib/voice-training/paths.js';
@@ -9,7 +9,7 @@
 	const week = $derived(data.week);
 	const courseDays = getCourseDays();
 
-	function isSessionDone(s) {
+	function isSessionDone(s: { lessonId: string; lessonDay: number }) {
 		return progress.getLessonDay(s.lessonId) > s.lessonDay;
 	}
 
@@ -17,7 +17,7 @@
 		courseDays.findIndex((day) => day.sessions.some((s) => !isSessionDone(s)))
 	);
 
-	function lessonState(index) {
+	function lessonState(index: number) {
 		if (progress.testMode) return 'active';
 		const l = week.lessons[index];
 		const firstDay = courseDays.findIndex((d) => d.sessions.some((s) => s.lessonId === l.id));

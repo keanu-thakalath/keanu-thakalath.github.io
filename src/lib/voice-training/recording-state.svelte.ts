@@ -1,10 +1,11 @@
 import { getContext, setContext } from 'svelte';
 import { browser } from '$app/environment';
-import { recordingStore } from '$lib/voice-training/recording-store.js';
+import { recordingStore, buildClipKey } from '$lib/voice-training/recording-store.js';
+import type { ProgressState } from '$lib/voice-training/progress-state.svelte.js';
 
 const RECORDING_KEY = Symbol('RECORDING');
 
-function pickMimeType() {
+function pickMimeType(): string | null {
 	if (typeof MediaRecorder === 'undefined') return null;
 	for (const type of ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']) {
 		if (MediaRecorder.isTypeSupported(type)) return type;
@@ -13,22 +14,22 @@ function pickMimeType() {
 }
 
 export class RecordingState {
-	available = $state(false);
-	micPermission = $state('prompt');
-	isRecording = $state(false);
-	activeSlotKey = $state(null);
-	elapsed = $state(0);
+	available: boolean = $state(false);
+	micPermission: string = $state('prompt');
+	isRecording: boolean = $state(false);
+	activeSlotKey: string | null = $state(null);
+	elapsed: number = $state(0);
 
-	#progress;
-	#mimeType = null;
-	#mediaRecorder = null;
-	#stream = null;
-	#chunks = [];
+	#progress: ProgressState;
+	#mimeType: string | null = null;
+	#mediaRecorder: MediaRecorder | null = null;
+	#stream: MediaStream | null = null;
+	#chunks: Blob[] = [];
 	#startTime = 0;
-	#elapsedHandle = null;
-	#objectUrls = [];
+	#elapsedHandle: ReturnType<typeof setInterval> | null = null;
+	#objectUrls: string[] = [];
 
-	constructor(progressState) {
+	constructor(progressState: ProgressState) {
 		this.#progress = progressState;
 		if (browser) {
 			this.#mimeType = pickMimeType();
@@ -36,7 +37,7 @@ export class RecordingState {
 		}
 	}
 
-	async requestMic() {
+	async requestMic(): Promise<boolean> {
 		if (!browser || !this.available) return false;
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -49,8 +50,8 @@ export class RecordingState {
 		}
 	}
 
-	async startRecording(slotKey) {
-		if (this.isRecording || !this.available) return;
+	async startRecording(slotKey?: string) {
+		if (this.isRecording || !this.available || !this.#mimeType) return;
 		try {
 			this.#stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			this.micPermission = 'granted';
@@ -75,33 +76,35 @@ export class RecordingState {
 		}, 200);
 	}
 
-	async stopRecording() {
-		if (!this.isRecording || !this.#mediaRecorder) return null;
-		const blob = await new Promise((resolve) => {
-			this.#mediaRecorder.onstop = () => {
-				clearInterval(this.#elapsedHandle);
+	async stopRecording(): Promise<{ blob: Blob; durationMs: number } | null> {
+		const recorder = this.#mediaRecorder;
+		if (!this.isRecording || !recorder) return null;
+		const mimeType = this.#mimeType;
+		const blob = await new Promise<Blob>((resolve) => {
+			recorder.onstop = () => {
+				if (this.#elapsedHandle) clearInterval(this.#elapsedHandle);
 				this.#elapsedHandle = null;
 				this.isRecording = false;
 				this.activeSlotKey = null;
 				this.#stream?.getTracks().forEach((t) => t.stop());
 				this.#stream = null;
-				const result = new Blob(this.#chunks, { type: this.#mimeType });
+				const result = new Blob(this.#chunks, { type: mimeType ?? undefined });
 				this.#chunks = [];
 				this.#mediaRecorder = null;
 				resolve(result);
 			};
-			this.#mediaRecorder.stop();
+			recorder.stop();
 		});
 		const durationMs = await this.#probeDuration(blob);
 		return { blob, durationMs };
 	}
 
-	#probeDuration(blob) {
+	#probeDuration(blob: Blob): Promise<number> {
 		return new Promise((resolve) => {
 			const url = URL.createObjectURL(blob);
 			const audio = new Audio();
 			let resolved = false;
-			const done = (ms) => {
+			const done = (ms: number) => {
 				if (resolved) return;
 				resolved = true;
 				audio.removeAttribute('src');
@@ -125,8 +128,15 @@ export class RecordingState {
 		});
 	}
 
-	async saveClip(lessonId, dayIndex, taskId, slotId, blob, durationMs) {
-		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
+	async saveClip(
+		lessonId: string,
+		dayIndex: number,
+		taskId: string,
+		slotId: string,
+		blob: Blob,
+		durationMs: number
+	) {
+		const key = buildClipKey(lessonId, dayIndex, taskId, slotId);
 		await recordingStore.save(key, blob, durationMs);
 		this.#progress.setRecordingMeta(lessonId, dayIndex, taskId, slotId, {
 			durationMs,
@@ -135,8 +145,13 @@ export class RecordingState {
 		});
 	}
 
-	async loadClip(lessonId, dayIndex, taskId, slotId) {
-		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
+	async loadClip(
+		lessonId: string,
+		dayIndex: number,
+		taskId: string,
+		slotId: string
+	): Promise<{ url: string; durationMs: number } | null> {
+		const key = buildClipKey(lessonId, dayIndex, taskId, slotId);
 		const record = await recordingStore.load(key);
 		if (!record) return null;
 		const url = URL.createObjectURL(record.blob);
@@ -144,17 +159,17 @@ export class RecordingState {
 		return { url, durationMs: record.durationMs };
 	}
 
-	async deleteClip(lessonId, dayIndex, taskId, slotId) {
-		const key = recordingStore.constructor.buildKey(lessonId, dayIndex, taskId, slotId);
+	async deleteClip(lessonId: string, dayIndex: number, taskId: string, slotId: string) {
+		const key = buildClipKey(lessonId, dayIndex, taskId, slotId);
 		await recordingStore.delete(key);
 		this.#progress.removeRecordingMeta(lessonId, dayIndex, taskId, slotId);
 	}
 
-	hasClip(lessonId, dayIndex, taskId, slotId) {
+	hasClip(lessonId: string, dayIndex: number, taskId: string, slotId: string): boolean {
 		return this.#progress.hasRecording(lessonId, dayIndex, taskId, slotId);
 	}
 
-	getClipMeta(lessonId, dayIndex, taskId, slotId) {
+	getClipMeta(lessonId: string, dayIndex: number, taskId: string, slotId: string) {
 		return this.#progress.getRecordingMeta(lessonId, dayIndex, taskId, slotId);
 	}
 
@@ -182,10 +197,10 @@ export class RecordingState {
 	}
 }
 
-export function setRecordingState(progressState) {
+export function setRecordingState(progressState: ProgressState): RecordingState {
 	return setContext(RECORDING_KEY, new RecordingState(progressState));
 }
 
-export function getRecordingState() {
-	return getContext(RECORDING_KEY);
+export function getRecordingState(): RecordingState {
+	return getContext<RecordingState>(RECORDING_KEY);
 }

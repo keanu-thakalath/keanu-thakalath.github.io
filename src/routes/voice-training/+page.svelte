@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
@@ -11,7 +11,7 @@
 		goto(`${vtBase}/intro`, { replaceState: true });
 	}
 
-	function isWeekComplete(week) {
+	function isWeekComplete(week: (typeof course.weeks)[number]) {
 		return week.lessons.every(
 			(l) => progress.lessonDone(l.id) && progress.isLessonPracticeComplete(l.id, l)
 		);
@@ -20,7 +20,7 @@
 	// Active week = first week that isn't fully complete
 	const activeWeekIndex = $derived(course.weeks.findIndex((w) => !isWeekComplete(w)));
 
-	function weekState(index) {
+	function weekState(index: number) {
 		if (progress.testMode) return 'active';
 		if (activeWeekIndex === -1) return 'done'; // everything complete
 		if (index < activeWeekIndex) return 'done';
@@ -28,7 +28,7 @@
 		return 'locked';
 	}
 
-	function completedForWeek(week) {
+	function completedForWeek(week: (typeof course.weeks)[number]) {
 		return week.lessons.filter((l) => progress.lessonDone(l.id)).length;
 	}
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getProgressState } from '$lib/voice-training/progress-state.svelte.js';
 	import { getAllLessons, getCourseDays } from '$lib/voice-training/courseData';
@@ -8,7 +8,7 @@
 	const allLessons = getAllLessons();
 	const courseDays = getCourseDays();
 
-	function isSessionDone(session) {
+	function isSessionDone(session: { lessonId: string; lessonDay: number }) {
 		return progress.getLessonDay(session.lessonId) > session.lessonDay;
 	}
 
@@ -30,6 +30,7 @@
 	function startFlow() {
 		if (unreadNewLessons.length > 0) {
 			const lesson = allLessons.find((l) => l.id === unreadNewLessons[0]);
+			if (!lesson) return;
 			goto(`${vtBase}/week/${lesson.weekId}/lesson/${lesson.id}`);
 			return;
 		}
@@ -66,26 +67,30 @@
 		<ul class="task-summary">
 			{#each unreadNewLessons as lessonId (lessonId)}
 				{@const lessonInfo = allLessons.find((l) => l.id === lessonId)}
-				<li>
-					<span class="status-dot"></span>
-					<span>Read: {lessonInfo.title}</span>
-					<span class="muted">New lesson</span>
-				</li>
+				{#if lessonInfo}
+					<li>
+						<span class="status-dot"></span>
+						<span>Read: {lessonInfo.title}</span>
+						<span class="muted">New lesson</span>
+					</li>
+				{/if}
 			{/each}
 			{#each pendingSessions as session (session.lessonId)}
 				{@const lessonInfo = allLessons.find((l) => l.id === session.lessonId)}
-				<li>
-					<span class="status-dot"></span>
-					{#if lessonInfo.recurring}
-						<span>{lessonInfo.title}</span>
-						<span class="muted">Daily practice</span>
-					{:else}
-						<span>Practice: {lessonInfo.title}</span>
-						<span class="muted">
-							Day {session.lessonDay + 1} of {lessonInfo.schedule?.length ?? 0}
-						</span>
-					{/if}
-				</li>
+				{#if lessonInfo}
+					<li>
+						<span class="status-dot"></span>
+						{#if lessonInfo.recurring}
+							<span>{lessonInfo.title}</span>
+							<span class="muted">Daily practice</span>
+						{:else}
+							<span>Practice: {lessonInfo.title}</span>
+							<span class="muted">
+								Day {session.lessonDay + 1} of {lessonInfo.schedule?.length ?? 0}
+							</span>
+						{/if}
+					</li>
+				{/if}
 			{/each}
 		</ul>
 
