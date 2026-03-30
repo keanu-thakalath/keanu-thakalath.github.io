@@ -3,6 +3,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
 
+	let { data } = $props();
 	let visible = $state(false);
 	onMount(() => visible = true);
 </script>
@@ -33,6 +34,25 @@
 		</section>
 
 		<section class="section" in:fly={{ y: 20, duration: 600, delay: 300, easing: cubicOut }}>
+			<h2>recent posts <a class="see-all" href="/blog">see all &rarr;</a></h2>
+			<ul class="posts-list">
+				{#each data.recentPosts as post}
+					<li class="post-item">
+						<h3>
+							<a href={post.path}>
+								{post.meta.title}
+							</a>
+						</h3>
+						{#if post.meta.description}
+							<p class="post-description">{post.meta.description}</p>
+						{/if}
+						<span class="post-date">{post.meta.date}</span>
+					</li>
+				{/each}
+			</ul>
+		</section>
+
+		<section class="section" in:fly={{ y: 20, duration: 600, delay: 400, easing: cubicOut }}>
 			<h2>currently building</h2>
 			<div class="project-grid">
 				<a class="project-card" href="https://yomisensei.net" target="_blank" rel="noreferrer">
@@ -58,7 +78,7 @@
 			</div>
 		</section>
 
-		<section class="section" in:fly={{ y: 20, duration: 600, delay: 450, easing: cubicOut }}>
+		<section class="section" in:fly={{ y: 20, duration: 600, delay: 500, easing: cubicOut }}>
 			<h2>books</h2>
 			<ul class="fav-list">
 				<li>
@@ -77,7 +97,7 @@
 			<p class="fav-note">Confessions by Minato Kanae</p>
 		</section>
 
-		<section class="section" in:fly={{ y: 20, duration: 600, delay: 600, easing: cubicOut }}>
+		<section class="section" in:fly={{ y: 20, duration: 600, delay: 650, easing: cubicOut }}>
 			<h2>anime</h2>
 			<ul class="fav-list">
 				<li>
@@ -98,9 +118,9 @@
 			<p class="fav-note">Scum's Wish</p>
 		</section>
 
-		<section class="section" in:fly={{ y: 20, duration: 600, delay: 750, easing: cubicOut }}>
+		<section class="section" in:fly={{ y: 20, duration: 600, delay: 800, easing: cubicOut }}>
 			<h2>resume</h2>
-			<div class="resume-card">
+			<div class="resume-content">
 				<div class="resume-row">
 					<h3>education</h3>
 					<p>BS Computer Science, University of Washington &mdash; Winter 2026</p>
@@ -168,6 +188,65 @@
 		text-transform: lowercase;
 		letter-spacing: 0.03em;
 		color: var(--color-text-muted);
+		font-weight: 600;
+	}
+
+	/* --- Recent posts --- */
+	.see-all {
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: var(--color-primary);
+		margin-left: 0.5rem;
+		text-decoration: none;
+		letter-spacing: 0;
+		text-transform: none;
+	}
+
+	.see-all:hover {
+		text-decoration: underline;
+	}
+
+	.posts-list {
+		list-style: none;
+		padding: 0;
+		margin: 0.8rem 0 0;
+	}
+
+	.post-item {
+		padding: 0.8rem 0;
+	}
+
+	.post-item + .post-item {
+		border-top: 1px solid var(--color-border-light);
+	}
+
+	.post-item h3 {
+		margin: 0;
+		font-size: 1.05rem;
+		font-weight: 600;
+	}
+
+	.post-item h3 a {
+		color: var(--color-text-strong);
+		text-decoration: none;
+	}
+
+	.post-item h3 a:hover {
+		color: var(--color-primary);
+	}
+
+	.post-description {
+		margin: 0.3rem 0 0;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+		line-height: 1.45;
+	}
+
+	.post-date {
+		display: inline-block;
+		margin-top: 0.3rem;
+		font-size: 0.8rem;
+		color: var(--color-primary);
 		font-weight: 600;
 	}
 
@@ -307,16 +386,16 @@
 	}
 
 	/* --- Resume --- */
-	.resume-card {
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: 12px;
-		padding: 1rem;
+	.resume-content {
 		margin-top: 0.6rem;
 	}
 
 	.resume-row {
-		margin-bottom: 0.8rem;
+		padding: 0.6rem 0;
+	}
+
+	.resume-row + .resume-row {
+		border-top: 1px solid var(--color-border-light);
 	}
 
 	.resume-row h3 {
@@ -334,14 +413,13 @@
 
 	.resume-link {
 		display: inline-block;
+		margin-top: 0.6rem;
 		font-size: 0.92rem;
 		font-weight: 600;
 		color: var(--color-primary);
-		border-bottom: 1px solid var(--color-border);
-		transition: border-color 0.2s;
 	}
 
 	.resume-link:hover {
-		border-bottom-color: var(--color-primary);
+		text-decoration: underline;
 	}
 </style>

@@ -1,4 +1,5 @@
 import { validatePost } from '$lib/markdown';
+import { redirect } from '@sveltejs/kit';
 import type { EntryGenerator } from './$types';
 import { getAllPostSlugs } from '$lib/posts';
 
@@ -15,6 +16,10 @@ export async function load({ params }) {
 
 	// Validate instead of type assertion
 	const post = validatePost(importedModule, `Blog post: ${params.slug}`);
+
+	if (post.metadata.link) {
+		redirect(301, post.metadata.link);
+	}
 
 	const { title, date } = post.metadata;
 	const Content = post.default;

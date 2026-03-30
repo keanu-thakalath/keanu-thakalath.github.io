@@ -3,6 +3,8 @@ import type { Component } from 'svelte';
 export interface PostMetadata {
 	title: string;
 	date: string;
+	description?: string;
+	link?: string;
 }
 export interface Post {
 	metadata: PostMetadata;

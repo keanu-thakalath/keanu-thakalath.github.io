@@ -14,6 +14,9 @@
 					</a>
 				</h2>
 				<p class="date">{post.meta.date}</p>
+				{#if post.meta.description}
+					<p class="description">{post.meta.description}</p>
+				{/if}
 			</li>
 		{/each}
 	</ul>
