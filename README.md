@@ -1,38 +1,38 @@
-# sv
+# keanu.wiki
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Hi, I'm Keanu! This is the source code for my personal website. Check it out at [keanu-thakalath.github.io](https://keanu-thakalath.github.io/).
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Blog** — Markdown-based posts with support for external links, RSS feed (`/rss.xml`), and a JSON API (`/api/posts`)
+- **Voice Training Course (Ruten)** — Structured multi-week curriculum with in-browser audio recording, progress tracking, and daily practice workflows
+- **Portfolio** — Projects, interests, resume, and more
+
+## Tech Stack
+
+- [SvelteKit](https://svelte.dev/) with static adapter
+- [mdsvex](https://mdsvex.pngwn.io/) for Markdown processing
+- TypeScript
+- GitHub Actions + GitHub Pages for CI/CD
+
+## Development
 
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
 ## Building
 
-To create a production version of your app:
-
 ```sh
 npm run build
+npm run preview   # preview the production build locally
 ```
 
-You can preview the production build with `npm run preview`.
+## Linting & Type Checking
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+npm run lint      # prettier + eslint
+npm run format    # auto-format
+npm run check     # svelte-check + tsc
+```
