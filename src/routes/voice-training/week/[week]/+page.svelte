@@ -46,14 +46,14 @@
 <section class="course-card">
 	<h2>Week Outcomes</h2>
 	<ul>
-		{#each week.outcomes as outcome}
+		{#each week.outcomes as outcome, i (i)}
 			<li>{outcome}</li>
 		{/each}
 	</ul>
 </section>
 
 <section class="card-grid">
-	{#each week.lessons as lesson, index}
+	{#each week.lessons as lesson, index (lesson.id)}
 		{@const state = lessonState(index)}
 		<article class="course-card" class:locked={state === 'locked'}>
 			<h3>

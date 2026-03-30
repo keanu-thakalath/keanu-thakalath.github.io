@@ -1,10 +1,5 @@
 import { error } from '@sveltejs/kit';
-import {
-	getCourseDays,
-	getAllLessons,
-	getWorkflowItems,
-	getScheduleForDay
-} from '$lib/voice-training/courseData';
+import { getCourseDays, getAllLessons, getScheduleForDay } from '$lib/voice-training/courseData';
 
 const courseDays = getCourseDays();
 const allLessons = getAllLessons();

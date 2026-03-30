@@ -63,7 +63,7 @@
 	{/if}
 
 	<div class="recording-slots" class:multi={slots.length > 1}>
-		{#each slots as slot}
+		{#each slots as slot (slot.id)}
 			<RecorderWidget
 				{lessonId}
 				{dayIndex}

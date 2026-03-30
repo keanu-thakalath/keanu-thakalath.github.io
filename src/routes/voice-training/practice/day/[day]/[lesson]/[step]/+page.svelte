@@ -234,7 +234,7 @@
 		{/if}
 
 		<div class="step-dots">
-			{#each todayTasks as task, i}
+			{#each todayTasks as task, i (task.id)}
 				<span class="dot" class:done={isDone(task)} class:active={i === step - 1}></span>
 			{/each}
 		</div>
@@ -263,7 +263,7 @@
 				{@const links = progress.getLinks(lesson.id, currentTask.id)}
 				{#if links.length > 0}
 					<ul>
-						{#each links as link}
+						{#each links as link (link.id)}
 							<li>
 								<a href={link.url} target="_blank" rel="noreferrer">{link.title}</a>
 							</li>
@@ -308,7 +308,7 @@
 					<div class="reference-links">
 						<p class="muted">Your reference voices:</p>
 						<ul>
-							{#each referenceLinks as link}
+							{#each referenceLinks as link (link.id)}
 								<li>
 									<a href={link.url} target="_blank" rel="noreferrer">
 										{link.title}
@@ -334,7 +334,7 @@
 
 					{#if progress.getLinks(lesson.id, currentTask.id).length > 0}
 						<ul class="saved-links">
-							{#each progress.getLinks(lesson.id, currentTask.id) as link}
+							{#each progress.getLinks(lesson.id, currentTask.id) as link (link.id)}
 								<li>
 									<a href={link.url} target="_blank" rel="noreferrer">
 										{link.title}

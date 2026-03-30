@@ -10,7 +10,7 @@
 	<h1>Blog</h1>
 
 	<ul class="blog-list">
-		{#each data.posts as post}
+		{#each data.posts as post (post.path)}
 			<li>
 				<h2>
 					<a href={post.path}>

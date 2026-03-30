@@ -38,7 +38,7 @@
 		<section class="section" in:fly={{ y: 20, duration: 600, delay: 300, easing: cubicOut }}>
 			<h2>recent posts <a class="see-all" href="/blog">see all &rarr;</a></h2>
 			<ul class="posts-list">
-				{#each data.recentPosts as post}
+				{#each data.recentPosts as post (post.path)}
 					<li class="post-item">
 						<h3>
 							<a href={post.path}>

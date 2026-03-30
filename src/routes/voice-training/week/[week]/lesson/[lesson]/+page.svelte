@@ -58,10 +58,10 @@
 </section>
 
 <section class="course-card">
-	{#each lesson.sections as section}
+	{#each lesson.sections as section (section.heading)}
 		<article class="section-block">
 			<h3>{section.heading}</h3>
-			{#each section.body as paragraph}
+			{#each section.body as paragraph, i (i)}
 				<p>{@html linkify(paragraph)}</p>
 			{/each}
 		</article>
@@ -77,7 +77,7 @@
 	{/if}
 
 	<ul class="task-summary">
-		{#each workflow as task}
+		{#each workflow as task (task.id)}
 			{@const count =
 				task.type === 'links'
 					? progress.getLinks(lesson.id, task.id).length > 0

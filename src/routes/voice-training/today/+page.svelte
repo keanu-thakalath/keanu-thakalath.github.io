@@ -64,7 +64,7 @@
 
 	<section class="course-card">
 		<ul class="task-summary">
-			{#each unreadNewLessons as lessonId}
+			{#each unreadNewLessons as lessonId (lessonId)}
 				{@const lessonInfo = allLessons.find((l) => l.id === lessonId)}
 				<li>
 					<span class="status-dot"></span>
@@ -72,7 +72,7 @@
 					<span class="muted">New lesson</span>
 				</li>
 			{/each}
-			{#each pendingSessions as session}
+			{#each pendingSessions as session (session.lessonId)}
 				{@const lessonInfo = allLessons.find((l) => l.id === session.lessonId)}
 				<li>
 					<span class="status-dot"></span>

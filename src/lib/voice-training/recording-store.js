@@ -11,7 +11,7 @@ class RecordingStore {
 
 	async #open() {
 		if (this.#dbPromise) return this.#dbPromise;
-		this.#dbPromise = new Promise((resolve, reject) => {
+		this.#dbPromise = new Promise((resolve) => {
 			if (typeof indexedDB === 'undefined') {
 				resolve(null);
 				return;

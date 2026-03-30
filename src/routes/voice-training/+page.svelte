@@ -49,7 +49,7 @@
 </section>
 
 <section class="card-grid">
-	{#each course.weeks as week, index}
+	{#each course.weeks as week, index (week.id)}
 		{@const state = weekState(index)}
 		<article class="course-card" class:locked={state === 'locked'}>
 			<h2><a href={`${vtBase}/week/${week.id}`}>Week {week.id}: {week.title}</a></h2>
