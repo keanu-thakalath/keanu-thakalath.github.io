@@ -15,11 +15,13 @@
 	<div>
 		<a href="/">Home</a>
 		<span class="footer-sep">&middot;</span>
-		<a href="/voice-training">Voice Training</a>
-		<span class="footer-sep">&middot;</span>
-		<a href="https://yomisensei.net" target="_blank" rel="noreferrer">Yomi Sensei</a>
-		<span class="footer-sep">&middot;</span>
-		<a href="https://linkedin.com/in/keanu-thakalath" target="_blank" rel="noreferrer">LinkedIn</a>
+		<a href="/voice-training">Ruten</a>
+		{#if !data.currentRoute?.startsWith('/voice-training')}
+			<span class="footer-sep">&middot;</span>
+			<a href="https://yomisensei.net" target="_blank" rel="noreferrer">Yomi Sensei</a>
+			<span class="footer-sep">&middot;</span>
+			<a href="https://linkedin.com/in/keanu-thakalath" target="_blank" rel="noreferrer">LinkedIn</a>
+		{/if}
 	</div>
 	{#if data.currentRoute?.startsWith('/voice-training')}
 		<div>

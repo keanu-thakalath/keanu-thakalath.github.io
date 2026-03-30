@@ -13,14 +13,14 @@
 
 <section class="intro-page">
 	<div class="intro-hero">
-		<h1>Voice Training Course</h1>
-		<p class="intro-subtitle">A structured, self-paced course for voice feminization based on
+		<h1>Ruten</h1>
+		<p class="intro-subtitle">A structured, self-paced voice feminization course based on
 			<a href="https://old.reddit.com/r/transvoice/comments/d3cqqm/ls_voice_training_guide_level_4_for_mtf/" target="_blank" rel="noreferrer">L's Voice Training Guide</a>.</p>
 	</div>
 
 	<div class="intro-section">
 		<h2>What is this?</h2>
-		<p>This is a free, interactive voice training course that takes the concepts from L's Voice Training Guide and organizes them into a structured weekly curriculum with built-in practice tracking, timed exercises, and audio recording.</p>
+		<p>Ruten is a free, interactive voice training course that takes the concepts from L's Voice Training Guide and organizes them into a structured weekly curriculum with built-in practice tracking, timed exercises, and audio recording.</p>
 		<p>The original guide lays out a progression through four difficulty levels covering eight core vocal elements. This course turns that progression into concrete weekly lessons with daily practice routines you can follow at your own pace.</p>
 	</div>
 

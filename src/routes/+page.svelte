@@ -71,8 +71,8 @@
 					<span class="tech">Rust</span>
 				</div>
 				<a class="project-card" href="/voice-training">
-					<h3>Voice Training</h3>
-					<p>A structured course for voice feminization.</p>
+					<h3>Ruten</h3>
+					<p>A structured, fully local voice feminization course with practice tracking and timed exercises.</p>
 					<span class="tech">SvelteKit</span>
 				</a>
 			</div>

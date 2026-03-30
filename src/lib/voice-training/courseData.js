@@ -1,5 +1,5 @@
 export const course = {
-  title: "Structured Voice Training Course",
+  title: "Ruten",
   subtitle: "Weekly overviews, full lesson writeups, and trackable homework.",
   weeks: [
     {
