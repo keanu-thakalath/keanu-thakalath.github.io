@@ -13,7 +13,8 @@ export function entries() {
 			const lesson = allLessons.find((l) => l.id === session.lessonId);
 			if (!lesson) continue;
 			const taskIds = getScheduleForDay(lesson, session.lessonDay);
-			for (let s = 1; s <= taskIds.length; s++) {
+			// taskIds.length + 1 is the "day complete" screen shown after the last task
+			for (let s = 1; s <= taskIds.length + 1; s++) {
 				result.push({
 					day: String(d + 1),
 					lesson: session.lessonId,
